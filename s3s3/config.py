@@ -36,7 +36,7 @@ def get_calling_format(name):
     return calling_format_class()
 
 
-def fixup(connections):
+def connection_fixup(connections):
     """
     Fix the configuration connection dictionaries so they
     can be passed in to boto to create valid boto s3 connections.
@@ -49,7 +49,7 @@ def fixup(connections):
                 get_calling_format(conn['calling_format'])
 
 
-fixup({'source': source, **destinations})
+connection_fixup({'source': source, **destinations})
 
 
 def get_pubsub():

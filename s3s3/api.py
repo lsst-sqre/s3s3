@@ -12,14 +12,15 @@ def create_connection(connection_args):
     return S3Connection(**connection_args)
 
 
-def upload(source_key, dest_key):
+def upload(source_key, dest_keys):
     """
     `source_key` The source boto s3 key.
-    `dest_key` The destination boto s3 connection.
+    `dest_keys` The destination boto s3 keys.
     """
     # Use the same name if no destination key is passed.
     if not dest_key:
         dest_key = source_key
     with tempfile.NamedTemporaryFile() as data:
         source_key.get_contents_to_file(data)
-        dest_key.set_contents_from_filename(data.name)
+        for dest_key in dest_keys:
+            dest_key.set_contents_from_filename(data.name)
