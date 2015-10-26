@@ -8,8 +8,9 @@ import os
 config = configparser.ConfigParser()
 config.read(['/usr/local/etc/s3s3.ini',
              os.path.join(os.path.dirname(__file__), 's3s3.ini'),
-             's3s3.ini'])
-
+             os.path.join(os.pardir, 's3s3.ini'),
+             os.path.join(os.curdir, 's3s3.ini')])
+print(config.sections())
 
 source = {k: v for k, v in config['source'].items()}
 
@@ -36,20 +37,21 @@ def get_calling_format(name):
     return calling_format_class()
 
 
-def connection_fixup(connections):
+def connection_fixup(source, destinations):
     """
     Fix the configuration connection dictionaries so they
     can be passed in to boto to create valid boto s3 connections.
     """
-    for _, conn in connections.items():
-        if conn.get('is_secure'):
-            conn['is_secure'] = bool(strtobool(conn['is_secure']))
-        if conn.get('calling_format'):
-            conn['calling_format'] =\
+    for conn_kv in [source, destinations]:
+        for _, conn in conn_kv.items():
+            if conn.get('is_secure'):
+                conn['is_secure'] = bool(strtobool(conn['is_secure']))
+            if conn.get('calling_format'):
+                conn['calling_format'] =\
                 get_calling_format(conn['calling_format'])
 
 
-connection_fixup({'source': source, **destinations})
+connection_fixup({'source': source, destinations})
 
 
 def get_pubsub():
