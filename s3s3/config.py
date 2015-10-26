@@ -10,7 +10,7 @@ config.read(['/usr/local/etc/s3s3.ini',
              os.path.join(os.path.dirname(__file__), 's3s3.ini'),
              os.path.join(os.pardir, 's3s3.ini'),
              os.path.join(os.curdir, 's3s3.ini')])
-print(config.sections())
+
 
 source = {k: v for k, v in config['source'].items()}
 
