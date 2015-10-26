@@ -51,7 +51,7 @@ def connection_fixup(source, destinations):
                 get_calling_format(conn['calling_format'])
 
 
-connection_fixup({'source': source, destinations})
+connection_fixup({'source': source}, destinations)
 
 
 def get_pubsub():
