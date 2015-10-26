@@ -1,0 +1,14 @@
+[source]
+     aws_access_key_id = {YOUR_AWS_ACCESS_KEY_ID}
+     aws_secret_access_key = {YOUR_AWS_SECRET_ACCESS_KEY}
+     bucket_name = {YOUR_S3_BUCKET}
+     host = {YOUR_CEPH_S3_ENDPOINT}
+     is_secure = True # Optional
+     calling_format = OrdinaryCallingFormat # Optional
+[destination]
+     aws_access_key_id = {YOUR_AWS_ACCESS_KEY_ID}
+     aws_secret_access_key = {YOUR_AWS_SECRET_ACCESS_KEY}
+     bucket_name = {YOUR_S3_BUCKET}
+     is_secure = True # Optional
+
+
