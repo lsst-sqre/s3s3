@@ -33,6 +33,6 @@ def upload(source_key, dest_keys):
         for dest_key in dest_keys:
             dest_key.set_contents_from_filename(data.name)
             try:
-                r.set(u'backup=>' + str(dest_key.key, '), True)
+                r.set(u'backup=>' + dest_key.key, True)
             except redis.ConnectionError:
                 logging.warn('Unable to connect to redis')
