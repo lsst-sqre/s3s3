@@ -29,9 +29,10 @@ def upload(source_key, dest_keys):
             'The source_key and dest_keys parameters are required.')
     with tempfile.NamedTemporaryFile() as data:
         source_key.get_contents_to_file(data)
+        data.file.flush()
         for dest_key in dest_keys:
             dest_key.set_contents_from_filename(data.name)
             try:
-                r.set('backup=>' + dest_key.key)
+                r.set(u'backup=>' + str(dest_key.key, '), True)
             except redis.ConnectionError:
                 logging.warn('Unable to connect to redis')
