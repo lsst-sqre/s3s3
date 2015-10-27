@@ -58,7 +58,7 @@ def _update_md5(keys):
     for key in keys:
         if not key.md5:
             with tempfile.NamedTemporaryFile() as data:
-                dest_key.get_contents_to_file(data)
+                key.get_contents_to_file(data)
                 data.file.flush()
                 logging.info('Updated md5 for {0} to'
                              ' {1} in bucket {2}.'.format(
