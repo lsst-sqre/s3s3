@@ -42,7 +42,7 @@ def upload(source_key, dest_keys):
 def duplicate_bucket(source_bucket, dest_bucket):
     for source_key in source_bucket.get_all_keys():
         dest_key = Key(dest_bucket)
-        dest_key.key = s3_key
+        dest_key.key = source_key.key
         if not dest_key.exists():
             upload(source_key, [dest_key])
         _update_md5([source_key, dest_key])
