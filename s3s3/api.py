@@ -1,9 +1,15 @@
 """
 The API for s3s3.
 """
+import logging
 import tempfile
 
 from boto.s3.connection import S3Connection
+
+import redis
+
+
+r = redis.Redis()
 
 
 def create_connection(connection_args):
@@ -25,3 +31,7 @@ def upload(source_key, dest_keys):
         source_key.get_contents_to_file(data)
         for dest_key in dest_keys:
             dest_key.set_contents_from_filename(data.name)
+            try:
+                r.set('backup=>' + dest_key.key)
+            except redis.ConnectionError:
+                logging.warn('Unable to connect to redis')
