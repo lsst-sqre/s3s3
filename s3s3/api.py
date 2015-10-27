@@ -36,3 +36,31 @@ def upload(source_key, dest_keys):
                 r.set(u'backup=>' + dest_key.key, True)
             except redis.ConnectionError:
                 logging.warn('Unable to connect to redis')
+
+
+def duplicate_bucket(source_bucket, dest_bucket):
+    for source_key in source_bucket.get_all_keys():
+        dest_key = Key(dest_bucket)
+        dest_key.key = s3_key
+        if not dest_key.exists():
+            upload(source_key, [dest_key])
+        _update_md5([source_key, dest_key])
+        if source_key.md5 != dest_key.md5:
+            upload(source_key, [dest_key])
+            logging.info('Uploaded {0} to {1} in bucket {2}.'.format(
+                dest_key.key,
+                dest_key.bucket.connection.host,
+                dest_key.bucket.name))
+
+
+def _update_md5(keys):
+    for key in keys:
+        if not key.md5:
+            with tempfile.NamedTemporaryFile() as data:
+                dest_key.get_contents_to_file(data)
+                data.file.flush()
+                logging.info('Updated md5 for {0} to'
+                             ' {1} in bucket {2}.'.format(
+                                 key.key,
+                                 key.bucket.connection.host,
+                                 key.bucket.name))
