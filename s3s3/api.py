@@ -39,19 +39,20 @@ def upload(source_key, dest_keys):
                 logging.warn('Unable to connect to redis')
 
 
-def duplicate_bucket(source_bucket, dest_bucket):
+def duplicate_bucket(source_bucket, dest_bucket, verify_md5=False):
     for source_key in source_bucket.get_all_keys():
         dest_key = Key(dest_bucket)
         dest_key.key = source_key.key
         if not dest_key.exists():
             upload(source_key, [dest_key])
-        _update_md5([source_key, dest_key])
-        if source_key.md5 != dest_key.md5:
-            upload(source_key, [dest_key])
-            logging.info('Uploaded {0} to {1} in bucket {2}.'.format(
-                dest_key.key,
-                dest_key.bucket.connection.host,
-                dest_key.bucket.name))
+        if verify_md5:
+            _update_md5([source_key, dest_key])
+            if source_key.md5 != dest_key.md5:
+                upload(source_key, [dest_key])
+                logging.info('Uploaded {0} to {1} in bucket {2}.'.format(
+                    dest_key.key,
+                    dest_key.bucket.connection.host,
+                    dest_key.bucket.name))
 
 
 def _update_md5(keys):
