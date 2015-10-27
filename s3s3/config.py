@@ -42,8 +42,8 @@ def connection_fixup(source, destinations):
     Fix the configuration connection dictionaries so they
     can be passed in to boto to create valid boto s3 connections.
     """
-    for conn_kv in [source, destinations]:
-        for _, conn in conn_kv.items():
+    for conn_dicts in [source, destinations]:
+        for _, conn in conn_dicts.items():
             if conn.get('is_secure'):
                 conn['is_secure'] = bool(strtobool(conn['is_secure']))
             if conn.get('calling_format'):
