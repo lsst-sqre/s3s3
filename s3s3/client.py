@@ -14,7 +14,7 @@ def on_notify(source_conn, dest_conns, s3_key):
     """
     Replicate the s3_key from a source s3 to multiple s3 destinations.
     """
-    print(s3_key)
+    s3_key = s3_key.decode('utf-8')
     source_bucket = source_conn.get_bucket(source['bucket_name'])
     source_key = Key(source_bucket)
     source_key.key = s3_key
@@ -31,7 +31,8 @@ def on_notify(source_conn, dest_conns, s3_key):
                 dest_keys.append(dest_key)
         upload(source_key, dest_keys)
     else:
-        logging.warn('s3_key: {0} does not exist in source s3 bucket.'.format(s3_key))
+        logging.warn('s3_key: {0} does not exist in '
+                     'source s3 bucket.'.format(s3_key))
 
 
 class Client:
