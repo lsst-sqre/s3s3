@@ -1,11 +1,9 @@
 from .. import config
+from .redis import Listener
 
-
-if config.pubsub['redis']:
-    from .redis import Listener
-    listener = Listener('backup')
-    listen = listener.run
-
-
-if config.pubsub['sns']:
-    listen = None
+def get_listen():
+    if config.pubsub['redis']:
+        listener = Listener('backup')
+        return listener.run
+    if config.pubsub['sns']:
+        return None
