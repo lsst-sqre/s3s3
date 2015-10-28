@@ -7,7 +7,7 @@ import logging
 from boto.s3.key import Key
 
 from .api import create_connection, upload, duplicate_bucket
-from .config import source, destinations
+from . import config
 from .pubsub import get_listen
 
 
@@ -40,14 +40,14 @@ class Client(object):
     """
 
     def __init__(self):
-        self.source_conn = create_connection(source)
-        self.source_conn.s3s3_verify_md5 = source['verify_md5']
+        self.source_conn = create_connection(config.source)
+        self.source_conn.s3s3_verify_md5 = config.source['verify_md5']
         self.source_conn.s3s3_bucket = _get_bucket(self.source_conn)
         self.dest_conns = {name: create_connection(d)\
-                           for name, d in destinations.items()}
+                           for name, d in config.destinations.items()}
         for name, dc in self.dest_conns.items():
             dc.s3s3_bucket = _get_bucket(dc, name)
-            dc.s3s3_verify_md5 = destinations[name]['verify_md5']
+            dc.s3s3_verify_md5 = config.destinations[name]['verify_md5']
 
 
 class ListenClient(Client):
@@ -97,9 +97,9 @@ def _get_bucket(conn, name=None):
     it is the source connection.
     """
     if name:
-        return conn.get_bucket(destinations[name]['bucket_name'])
+        return conn.get_bucket(config.destinations[name]['bucket_name'])
     else:
-        return conn.get_bucket(source['bucket_name'])
+        return conn.get_bucket(config.source['bucket_name'])
 
 
 def _get_key(bucket, s3_key):
