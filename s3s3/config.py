@@ -18,8 +18,10 @@ config_files = ['/usr/local/etc/s3s3.ini',
 
 
 def get_source_connection(config):
-    return {k: v for k, v in config['source'].items()}
-
+    if config.has_section('source'):
+        return {k: v for k, v in config['source'].items()}
+    else:
+        return {}
 
 def get_dest_connections(config):
     destinations = {}
