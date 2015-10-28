@@ -80,7 +80,17 @@ Duplicate the source bucket to the destination bucket. If `verify_md5` is true t
 
 ## Deploy ##
 
-Supervisord is being used to deploy. Exact configuration is coming.
+s3s3 requires redis, python3 and supervisord.
+
+```bash
+mkdir -p /opt/env
+cd /opt/env
+virtualenv -p python3 s3s3
+. /opt/env/s3s3/bin/activate
+pip install s3s3
+echo_s3s3_supervisord_conf > /etc/supervisor/conf.d/s3s3.conf
+service supervisor restart # or... start
+```
 
 ## LICENSE ##
 
