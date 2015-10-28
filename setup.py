@@ -42,9 +42,11 @@ setuptools.setup(
         "Topic :: System :: Archiving :: Backup",
         "Topic :: System :: Systems Administration"
     ],
+    data_files=[('extras', ['extras/s3s3.conf'])],
     entry_points={
         'console_scripts': [
             's3s3listen = s3s3.scripts.listen:main',
-            's3s3bucket = s3s3.scripts.bucket:main'
+            's3s3bucket = s3s3.scripts.bucket:main',
+            'echo_s3s3_supervisord_conf = s3s3.scripts.echo_s3s3_supervisord_conf:main'
         ]
     })
