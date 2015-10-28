@@ -56,11 +56,8 @@ s3s3bucket --config /path/pto/s3s3.ini
 This will use the configuration to build source and destination boto connections and duplicate the source bucket in the destination bucket.
 
 ## Client ##
-There are two clients. One for each service. `s3s3.client.ListenClient` is a client to listen to the `'backup'` redis pubsub channel and call `s3s3.client.on_notify`. `s3s3.client.BucketClient` is a client that uses the configuration to provide access to the duplicate_bucket API function.
 
-```python
-```class ListenClient(Client):
-```
+There are two clients. One for each service. `s3s3.client.ListenClient` is a client to listen to the `'backup'` redis pubsub channel and call `s3s3.client.on_notify`. `s3s3.client.BucketClient` is a client that uses the configuration to provide access to the duplicate_bucket API function.
 
 ## API ##
 
