@@ -17,7 +17,7 @@ To install use `pip install s3s3`
 
 ----
 
-For more information, please see: https://github.com/Deca-Technologies/purpurite
+For more information, please see: https://github.com/lsst-sqre/s3s3
 """ % (get_version('short'), readme)
 
 setuptools.setup(
