@@ -1,10 +1,11 @@
 """
 Redis pubsub.
 """
-import logging
 import threading
 
 import redis
+
+from ..log import logger
 
 
 class Listener(threading.Thread):
@@ -27,4 +28,4 @@ class Listener(threading.Thread):
                 if message['type'] == 'message':
                     method(message['data'])
         except redis.ConnectionError as ce:
-            logging.warn(ce)
+            logger.warning(ce)

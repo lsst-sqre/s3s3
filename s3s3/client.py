@@ -2,12 +2,12 @@
 Clients that use the config to provide access to the api.
 """
 from functools import partial
-import logging
 
 from boto.s3.key import Key
 
-from .api import create_connection, upload, duplicate_bucket
 from . import config
+from .api import create_connection, upload, duplicate_bucket
+from .log import logger
 from .pubsub import get_listen
 
 
@@ -17,7 +17,7 @@ def on_notify(source_conn, dest_conns, s3_key):
     """
     # s3_key is of type bytes and boto requires a str.
     s3_key = s3_key.decode('utf-8')
-    source_key = _get_key(source_conn.bucket, s3_key)
+    source_key = _get_key(source_conn.s3s3_bucket, s3_key)
     if source_key.exists():
         dest_keys = []
         dest_keys_verify_md5 = False
@@ -26,12 +26,16 @@ def on_notify(source_conn, dest_conns, s3_key):
             if not dest_key.exists():
                 dest_keys.append(dest_key)
                 dest_keys_verify_md5 |= dest_conn.s3s3_verify_md5
-        upload(source_key,
-               dest_keys,
-               self.source_conn.s3s3_verify_md5 or dest_keys_verify_md5)
+                upload(source_key,
+                       dest_keys,
+                       source_conn.s3s3_verify_md5 or dest_keys_verify_md5)
+            else:
+                logger.info('No upload called for s3_key: {0} '
+                            'because it already exists in the '
+                            'destination s3 bucket.'.format(s3_key))
     else:
-        logging.warn('s3_key: {0} does not exist in '
-                     'source s3 bucket.'.format(s3_key))
+        logger.warning('s3_key: {0} does not exist in '
+                       'source s3 bucket.'.format(s3_key))
 
 
 class Client(object):
@@ -43,7 +47,7 @@ class Client(object):
         self.source_conn = create_connection(config.source)
         self.source_conn.s3s3_verify_md5 = config.source['verify_md5']
         self.source_conn.s3s3_bucket = _get_bucket(self.source_conn)
-        self.dest_conns = {name: create_connection(d)\
+        self.dest_conns = {name: create_connection(d)
                            for name, d in config.destinations.items()}
         for name, dc in self.dest_conns.items():
             dc.s3s3_bucket = _get_bucket(dc, name)
@@ -57,8 +61,12 @@ class ListenClient(Client):
     """
 
     def listen(self):
-        _listen = get_listen()
-        _listen(partial(on_notify, self.source_conn, self.dest_conns))
+        try:
+            _listen = get_listen()
+            _listen(partial(on_notify, self.source_conn, self.dest_conns))
+        except Exception as e:
+            logger.error(e)
+            raise e
 
 
 class BucketClient(Client):
@@ -84,7 +92,7 @@ class BucketClient(Client):
                     dest_conn.s3s3_bucket,
                     verify_md5=(source_verify_md5 or dest_verify_md5))
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return False
         return True
 

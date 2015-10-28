@@ -1,13 +1,13 @@
 """
 The API for s3s3.
 """
-import logging
 import tempfile
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
 from . import config
+from .log import logger
 
 
 if config.pubsub['redis']:
@@ -38,7 +38,8 @@ def upload(source_key, dest_keys, verify_md5=False):
     ``verify_md5`` Verify md5 values when uploading. Source is always
     considered authoritative.
     """
-    # Use the same name if no destination key is passed.
+    logger.warning(dest_keys)
+    logger.warning(source_key)
     if not dest_keys or not source_key:
         raise Exception(
             'The source_key and dest_keys parameters are required.')
@@ -51,7 +52,7 @@ def upload(source_key, dest_keys, verify_md5=False):
             try:
                 r.set(u'backup=>' + dest_key.key, True)
             except redis.ConnectionError:
-                logging.warn('Unable to connect to redis')
+                logger.warning('Unable to connect to redis')
 
 
 def duplicate_bucket(source_bucket, dest_bucket, verify_md5=False):
@@ -73,7 +74,7 @@ def duplicate_bucket(source_bucket, dest_bucket, verify_md5=False):
             _update_md5([source_key, dest_key])
             if source_key.md5 != dest_key.md5:
                 upload(source_key, [dest_key])
-                logging.info('Uploaded {0} to {1} in bucket {2}.'.format(
+                logger.info('Uploaded {0} to {1} in bucket {2}.'.format(
                     dest_key.key,
                     dest_key.bucket.connection.host,
                     dest_key.bucket.name))
@@ -92,11 +93,11 @@ def _update_md5(keys):
             with tempfile.NamedTemporaryFile() as data:
                 key.get_contents_to_file(data)
                 data.file.flush()
-                logging.info('Updated md5 for {0} to'
-                             ' {1} in bucket {2}.'.format(
-                                 key.key,
-                                 key.bucket.connection.host,
-                                 key.bucket.name))
+                logger.info('Updated md5 for {0} to'
+                            ' {1} in bucket {2}.'.format(
+                                key.key,
+                                key.bucket.connection.host,
+                                key.bucket.name))
 
 
 def _upload_verify_md5(verify_md5, source_key, dest_key):
@@ -107,8 +108,8 @@ def _upload_verify_md5(verify_md5, source_key, dest_key):
     listen.
     """
     if verify_md5 and source_key.md5 != dest_key.md5:
-        logging.warn('md5 hash does not match for {0} to'
-                     ' {1} in bucket {2}.'.format(
-                         dest_key.key,
-                         dest_key.bucket.connection.host,
-                         dest_key.bucket.name))
+        logger.warning('md5 hash does not match for {0} to'
+                       ' {1} in bucket {2}.'.format(
+                           dest_key.key,
+                           dest_key.bucket.connection.host,
+                           dest_key.bucket.name))

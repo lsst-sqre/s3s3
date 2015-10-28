@@ -3,7 +3,7 @@
 Echo the s3s3 configuration template.
 """
 import logging
-import os
+from os.path import abspath, join, dirname, pardir
 
 
 def echo():
@@ -12,9 +12,8 @@ def echo():
     the relative diretory `../../extras/s3s3.ini.dist`
     """
     try:
-        conf = os.path.abspath(
-            os.path.join(os.path.dirname(__file__),
-                         os.path.pardir, os.path.pardir, 'extras/s3s3.ini.dist'))
+        conf = abspath(join(dirname(__file__),
+                            pardir, pardir, 'extras/s3s3.ini.dist'))
         print(open(conf).read())
         return True
     except Exception:

@@ -1,8 +1,9 @@
 import configparser
 from distutils.util import strtobool
 import importlib
-import logging
 import os
+
+from .log import logger
 
 
 required_sections = ['source',
@@ -23,6 +24,7 @@ def get_source_connection(config):
     else:
         return {}
 
+
 def get_dest_connections(config):
     destinations = {}
     for section_name in config.sections():
@@ -42,6 +44,20 @@ def get_calling_format(name):
     return calling_format_class()
 
 
+def get_pubsub(config):
+    if config.has_section('pubsub'):
+        pubsub = {k: v for k, v in config['pubsub'].items()}
+        pubsub['redis'] = bool(strtobool(pubsub.get('redis')))
+        pubsub['sns'] = bool(strtobool(pubsub.get('sns')))
+        if (pubsub.get('redis') ^ pubsub.get('sns')):
+            return pubsub
+        else:
+            logger.warning('Use either redis or sns for pubsub but not both.')
+            raise Exception('Use either redis or sns for pubsub but not both.')
+    else:
+        return {'redis': False, 'sns': False}
+
+
 def connection_fixup(source, destinations):
     """
     Fix the configuration connection dictionaries so they
@@ -57,21 +73,7 @@ def connection_fixup(source, destinations):
                 conn['is_secure'] = bool(strtobool(conn['is_secure']))
             if conn.get('calling_format'):
                 conn['calling_format'] =\
-                get_calling_format(conn['calling_format'])
-
-
-def get_pubsub(config):
-    if config.has_section('pubsub'):
-        pubsub = {k: v for k, v in config['pubsub'].items()}
-        pubsub['redis'] = bool(strtobool(pubsub.get('redis')))
-        pubsub['sns'] = bool(strtobool(pubsub.get('sns')))
-        if (pubsub.get('redis') ^ pubsub.get('sns')):
-            return pubsub
-        else:
-            logging.warn('Use either redis or sns for pubsub but not both.')
-            raise Exception('Use either redis or sns for pubsub but not both.')
-    else:
-        return {'redis': False, 'sns': False}
+                    get_calling_format(conn['calling_format'])
 
 
 def has_required_sections(config):
@@ -89,7 +91,7 @@ def initialize(config_file=None):
         config_files.append(os.path.expanduser(config_file))
     files_read = config.read(config_files)
     if has_required_sections(config):
-        logging.warn('Missing required sections: {0}'.format(
+        logger.warning('Missing required sections: {0}'.format(
             required_sections))
     source = get_source_connection(config)
     destinations = get_dest_connections(config)

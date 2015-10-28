@@ -2,15 +2,16 @@
 """
 Duplicate a source s3 bucket to destination s3 buckets.
 
-Configuration template: https://github.com/lsst-squre/s3s3/blob/master/s3s3/s3s3.ini.dist
+Configuration template:
+https://github.com/lsst-squre/s3s3/blob/master/s3s3/s3s3.ini.dist
 
 Also: https://github.com/lsst-sqre/s3s3
 """
 import argparse
-import logging
 
 from s3s3.client import BucketClient
 from s3s3.config import initialize
+from s3s3.log import logger
 
 
 def duplicate():
@@ -24,7 +25,7 @@ def duplicate():
     except KeyboardInterrupt:
         return True
     except Exception as e:
-        logging.warn(e)
+        logger.warning(e)
         return False
 
 

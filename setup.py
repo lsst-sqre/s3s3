@@ -25,29 +25,32 @@ setuptools.setup(
     version=get_version('short'),
     author='jmatt',
     author_email='jmatt@lsst.org',
-    description="A microservice to move files from S3 APIs (Swift or Ceph) to other S3 APIs.",
+    description='A microservice to move files from S3 APIs (Swift or '
+                'Ceph) to other S3 APIs.',
     long_description=long_description,
-    url="https://github.com/lsst-sqre/s3s3",
+    url='https://github.com/lsst-sqre/s3s3',
     packages=setuptools.find_packages(),
     install_requires=requirements,
     classifiers=[
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Information Technology",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Topic :: Software Development :: Libraries",
-        "Topic :: System",
-        "Topic :: System :: Archiving :: Backup",
-        "Topic :: System :: Systems Administration"
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Information Technology',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: System',
+        'Topic :: System :: Archiving :: Backup',
+        'Topic :: System :: Systems Administration'
     ],
     data_files=[('extras', ['extras/s3s3.conf', 'extras/s3s3.ini.dist'])],
     entry_points={
         'console_scripts': [
             's3s3listen = s3s3.scripts.listen:main',
             's3s3bucket = s3s3.scripts.bucket:main',
-            'echo_s3s3_ini_template = s3s3.scripts.echo_s3s3_ini_template:main',
-            'echo_s3s3_supervisord_conf = s3s3.scripts.echo_s3s3_supervisord_conf:main'
+            'echo_s3s3_ini_template = '
+            's3s3.scripts.echo_s3s3_ini_template:main',
+            'echo_s3s3_supervisord_conf = '
+            's3s3.scripts.echo_s3s3_supervisord_conf:main'
         ]
     })

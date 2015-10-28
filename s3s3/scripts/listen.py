@@ -3,7 +3,8 @@
 Listens for s3 object names through the redis pubsub 'backup' channel.
 When notified call the s3s3.api.upload function.
 
-Configuration template: https://github.com/lsst-squre/s3s3/blob/master/s3s3/s3s3.ini.dist
+Configuration template:
+https://github.com/lsst-squre/s3s3/blob/master/s3s3/s3s3.ini.dist
 
 Also: https://github.com/lsst-sqre/s3s3
 """
