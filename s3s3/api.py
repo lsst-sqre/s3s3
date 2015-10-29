@@ -29,25 +29,25 @@ def create_connection(connection_args):
     return S3Connection(**connection_args)
 
 
-def upload(source_key, dest_keys, verify_md5=False):
+def upload(source_key, dest_keys, verify_md5=False, force=False):
     """
     Download from the source s3 key to a named temporary file
-    and upload to the destination s3 key.
+    and upload to the destination s3 key, if the key doesn't exist.
     ``source_key`` The source boto s3 key.
     ``dest_keys`` A list of the destination boto s3 keys.
     ``verify_md5`` Verify md5 values when uploading. Source is always
     considered authoritative.
+    ``force`` Force upload to dest_key, even if it exists.
     """
-    logger.warning(dest_keys)
-    logger.warning(source_key)
     if not dest_keys or not source_key:
         raise Exception(
             'The source_key and dest_keys parameters are required.')
     with tempfile.NamedTemporaryFile() as data:
-        source_key.get_contents_to_file(data)
-        data.file.flush()
         for dest_key in dest_keys:
-            dest_key.set_contents_from_filename(data.name)
+            if force or not dest_key.exists():
+                source_key.get_contents_to_file(data)
+                data.file.flush()
+                dest_key.set_contents_from_filename(data.name)
             _upload_verify_md5(verify_md5, source_key, dest_key)
             try:
                 r.set(u'backup=>' + dest_key.key, True)
@@ -108,6 +108,7 @@ def _upload_verify_md5(verify_md5, source_key, dest_key):
     listen.
     """
     if verify_md5 and source_key.md5 != dest_key.md5:
+        _update_md5([source_key, dest_key])
         logger.warning('md5 hash does not match for {0} to'
                        ' {1} in bucket {2}.'.format(
                            dest_key.key,
