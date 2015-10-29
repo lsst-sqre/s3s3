@@ -2,7 +2,7 @@ import os
 import setuptools
 from s3s3.version import get_version
 
-readme = open('README.md').read()
+readme = open('README.rst').read()
 requirements = open('requirements.txt').read().split('\n')
 
 long_description = """
