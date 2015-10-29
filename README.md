@@ -89,7 +89,8 @@ virtualenv -p python3 s3s3
 . /opt/env/s3s3/bin/activate
 pip install s3s3
 echo_s3s3_supervisord_conf > /etc/supervisor/conf.d/s3s3.conf
-# cp /path/to/your/s3s3.ini /usr/local/etc/s3s3.ini
+echo_s3s3_ini_template > /usr/local/etc/s3s3.ini
+# Update ini file with your source and destination s3 information.
 service supervisor restart # or... start if it's not running.
 ```
 
