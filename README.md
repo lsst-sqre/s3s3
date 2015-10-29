@@ -40,10 +40,19 @@ Example template: https://github.com/jmatt/s3s3/blob/master/s3s3/s3s3.ini.dist
 ## Install ##
 
 s3s3 requires python3 and redis. It was tested with python3.4 and python3.5. And redis 3.x.
+
 ```bash
 pip install s3s3
 ```
 Pip install s3s3.
+
+## Client ##
+
+There are two clients. One for each service. `s3s3.client.ListenClient` is a client to listen to the `'backup'` redis pubsub channel and call `s3s3.client.on_notify`. `s3s3.client.BucketClient` is a client that uses the configuration to provide access to the duplicate_bucket API function.
+
+## Command Line ##
+
+Both clients are available as command line scripts.
 
 ```bash
 s3s3listen --config /path/to/s3s3.ini
@@ -54,10 +63,6 @@ This will use the configuration to build source and destination boto connections
 s3s3bucket --config /path/pto/s3s3.ini
 ```
 This will use the configuration to build source and destination boto connections and duplicate the source bucket in the destination bucket.
-
-## Client ##
-
-There are two clients. One for each service. `s3s3.client.ListenClient` is a client to listen to the `'backup'` redis pubsub channel and call `s3s3.client.on_notify`. `s3s3.client.BucketClient` is a client that uses the configuration to provide access to the duplicate_bucket API function.
 
 ## API ##
 
