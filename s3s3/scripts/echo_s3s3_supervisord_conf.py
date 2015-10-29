@@ -2,22 +2,34 @@
 """
 Echo the s3s3 supervisord configuration file.
 """
-import logging
-import os
+from pkg_resources import Requirement, resource_string
+
+
+def try_resource(location):
+    """
+    Try to get the resource in ``location``.
+    """
+    try:
+        return resource_string(Requirement.parse('s3s3'), location)
+    except FileNotFoundError:
+        return ''
 
 
 def echo():
     """
-    Echo the s3s3 supervisord configuration file in
-    the relative diretory `../../extras/s3s3.conf`
+    Echo the s3s3 supervisord configuration file.
+
+    Use pkg_resources module to try to find the s3s3.conf supervisord
+    configuration file. The file is located in a different location
+    depending on if it's a sdist or bdist_wheel install.
     """
     try:
-        conf = os.path.abspath(
-            os.path.join(os.path.dirname(__file__),
-                         os.path.pardir, os.path.pardir, 'extras/s3s3.conf'))
-        print(open(conf).read())
+        conf = try_resource('extras/s3s3.conf')  # sdist
+        if not conf:
+            conf = try_resource('../../../extras/s3s3.conf')  # bdist
+        print(conf.decode('utf-8'))
         return True
-    except Exception:
+    except Exception as e:
         return False
 
 
