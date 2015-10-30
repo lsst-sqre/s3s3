@@ -55,3 +55,11 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Emacs
+#*#
+*~
+
+# s3s3.ini
+s3s3.ini
+s3s3/s3s3.ini
